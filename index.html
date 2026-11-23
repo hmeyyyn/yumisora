@@ -4,13 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="referrer" content="no-referrer">
+<link rel="preconnect" href="https://wsrv.nl">
+<link rel="preload" as="image" href="https://wsrv.nl/?url=https://files.catbox.moe/tyxu2k.jpg&output=webp&q=85" fetchpriority="high">
+<link rel="preload" as="image" href="https://wsrv.nl/?url=https://files.catbox.moe/w0f50f.jpg&output=webp&q=85" fetchpriority="high">
 <title>Yumisora</title>
 <style>
   :root {
     --lx: 25%;
     --ly: 15%;
   }
-
   * {
     box-sizing: border-box;
     margin: 0;
@@ -18,15 +20,12 @@
     user-select: none;
     -webkit-user-select: none;
   }
-
   body {
     width: 100vw;
     height: 100dvh;
     overflow: hidden;
     background-color: #111614;
-    background-image: 
-      url('https://wsrv.nl/?url=https://files.catbox.moe/tyxu2k.jpg'),
-      url('https://files.catbox.moe/tyxu2k.jpg');
+    background-image: url('https://wsrv.nl/?url=https://files.catbox.moe/tyxu2k.jpg&output=webp&q=85');
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
@@ -36,7 +35,6 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     color: #f0f5f2;
   }
-
   #rainBg {
     position: fixed;
     inset: 0;
@@ -45,7 +43,6 @@
     pointer-events: none;
     z-index: 1;
   }
-
   .stage {
     width: min(475px, 92vw);
     aspect-ratio: 1.586 / 1;
@@ -54,9 +51,7 @@
     cursor: grab;
     z-index: 2;
   }
-
   .stage:active { cursor: grabbing; }
-
   .face {
     position: absolute;
     inset: 0;
@@ -79,18 +74,16 @@
     overflow: hidden;
     will-change: transform, opacity;
   }
-
   .face::before {
     content: '';
     position: absolute;
     inset: 0;
     background: 
-      radial-gradient(320px circle at var(--lx) var(--ly), rgba(255, 255, 255, 0.24), transparent 60%),
+      radial-gradient(340px circle at var(--lx) var(--ly), rgba(255, 255, 255, 0.24), transparent 65%),
       linear-gradient(115deg, rgba(255,255,255,0.14) 0%, transparent 28%, transparent 72%, rgba(255,255,255,0.09) 100%);
     pointer-events: none;
     z-index: 1;
   }
-
   .face::after {
     content: '';
     position: absolute;
@@ -110,7 +103,6 @@
     pointer-events: none;
     z-index: 4;
   }
-
   .drops-canvas {
     position: absolute;
     inset: 0;
@@ -119,7 +111,6 @@
     pointer-events: none;
     z-index: 3;
   }
-
   .content-layer {
     position: relative;
     z-index: 2;
@@ -129,18 +120,15 @@
     flex-direction: column;
     justify-content: space-between;
   }
-
   #front {
     padding: 26px 28px;
     text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
   }
-
   .top-row {
     display: flex;
     align-items: center;
     gap: 18px;
   }
-
   .avatar {
     width: 74px;
     height: 74px;
@@ -151,20 +139,17 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-
   .name-block {
     display: flex;
     flex-direction: column;
     gap: 6px;
   }
-
   .name {
     font-size: 22px;
     font-weight: 600;
     color: #fff;
     letter-spacing: -0.02em;
   }
-
   .status {
     font-size: 12.5px;
     color: #e8f2ec;
@@ -175,13 +160,11 @@
     border-radius: 99px;
     width: fit-content;
     cursor: pointer;
-    transition: background 0.15s;
+    transition: background 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   }
-
   .status:hover {
     background: rgba(255, 255, 255, 0.2);
   }
-
   .specs {
     display: flex;
     flex-direction: column;
@@ -190,21 +173,17 @@
     font-size: 13px;
     line-height: 1.4;
   }
-
   .spec-row {
     display: grid;
     grid-template-columns: 52px 1fr;
     align-items: baseline;
   }
-
   .spec-k {
     color: rgba(215, 232, 223, 0.78);
   }
-
   .spec-v {
     color: #fff;
   }
-
   .hint-row {
     display: flex;
     justify-content: flex-end;
@@ -213,25 +192,20 @@
     font-size: 11.5px;
     color: rgba(240, 245, 242, 0.7);
   }
-
   #swipeText {
     position: relative;
     display: inline-block;
-    transition: transform 0.3s ease, color 0.3s ease;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), color 0.5s ease;
   }
-
   #swipeText.nudge {
     color: #fff;
-    animation: swipePulse 2.4s ease-in-out forwards;
+    animation: swipePulse 2.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   }
-
   @keyframes swipePulse {
     0%   { transform: translateX(0); opacity: 0.7; }
-    30%  { transform: translateX(-14px); opacity: 1; }
-    60%  { transform: translateX(4px); opacity: 1; }
+    40%  { transform: translateX(-10px); opacity: 1; }
     100% { transform: translateX(0); opacity: 0.7; }
   }
-
   #back {
     background: linear-gradient(
       135deg,
@@ -246,15 +220,12 @@
     pointer-events: none;
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.75);
   }
-
   .shell-line {
     margin-bottom: 6px;
     color: #d4e8dc;
     white-space: nowrap;
   }
-
   #cmdText { color: #fff; }
-
   .cursor {
     display: inline-block;
     width: 6px;
@@ -264,9 +235,7 @@
     margin-left: 2px;
     animation: blink 0.9s step-end infinite;
   }
-
   @keyframes blink { 50% { opacity: 0; } }
-
   .back-wrap {
     display: grid;
     grid-template-columns: auto 1fr;
@@ -274,11 +243,9 @@
     flex: 1;
     align-items: center;
     opacity: 0;
-    transition: opacity 0.2s ease;
+    transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1);
   }
-
   .back-wrap.show { opacity: 1; }
-
   .bonsai {
     white-space: pre;
     font-size: 9.2px;
@@ -286,7 +253,6 @@
     letter-spacing: 0;
     font-variant-ligatures: none;
   }
-
   .b-wood  { color: #b89882; }
   .b-dark  { color: #8f725e; }
   .b-sak1  { color: #ffd9e6; }
@@ -294,33 +260,28 @@
   .b-sak3  { color: #e3789b; }
   .b-pot   { color: #b7c4be; }
   .b-grass { color: #8eb89f; }
-
   .info {
     display: flex;
     flex-direction: column;
     justify-content: center;
     min-width: 0;
   }
-
   .info-head {
     color: #fff;
     font-weight: 600;
     font-size: 14px;
     letter-spacing: 0.01em;
   }
-
   .info-rule {
     color: rgba(255, 255, 255, 0.32);
     font-size: 11px;
     margin: 3px 0 12px;
   }
-
   .soc-list {
     display: flex;
     flex-direction: column;
     gap: 11px;
   }
-
   .soc {
     display: flex;
     align-items: center;
@@ -328,7 +289,6 @@
     color: #f0f5f2;
     font-size: 12.5px;
   }
-
   .soc svg {
     width: 17px;
     height: 17px;
@@ -336,22 +296,18 @@
     flex-shrink: 0;
     filter: drop-shadow(0 1px 3px rgba(0,0,0,0.4));
   }
-
   .soc a {
     color: #fff;
     text-decoration: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.38);
-    transition: border-color 0.15s;
+    transition: border-color 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   }
-
   .soc a:hover {
     border-color: #fff;
   }
-
   .soc .soon {
     color: rgba(240, 245, 242, 0.52);
   }
-
   #soundBtn {
     position: fixed;
     bottom: 18px;
@@ -377,14 +333,12 @@
     color: #f0f5f2;
     cursor: pointer;
     z-index: 10;
-    transition: transform 0.15s ease, border-color 0.15s ease;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s ease;
   }
-
   #soundBtn:hover {
     transform: scale(1.06);
     border-color: rgba(255, 255, 255, 0.7);
   }
-
   #soundBtn svg {
     width: 17px;
     height: 17px;
@@ -395,7 +349,6 @@
     stroke-linejoin: round;
     filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.45));
   }
-
   @media (max-width: 460px) {
     #front { padding: 18px 20px; }
     .avatar { width: 60px; height: 60px; }
@@ -409,23 +362,21 @@
 </style>
 </head>
 <body ondragstart="return false;">
-
 <canvas id="rainBg"></canvas>
-
 <div class="stage" id="stage">
   <div class="face" id="front">
     <canvas class="drops-canvas" id="dropsFront"></canvas>
     <div class="content-layer">
       <div class="top-row">
-        <img src="https://wsrv.nl/?url=https://files.catbox.moe/w0f50f.jpg"
-             onerror="if(this.src.includes('wsrv')) this.src='https://files.catbox.moe/w0f50f.jpg'"
+        <img src="https://wsrv.nl/?url=https://files.catbox.moe/w0f50f.jpg&output=webp&q=85"
+             fetchpriority="high"
+             decoding="async"
              class="avatar" alt="">
         <div class="name-block">
           <div class="name">Yumisora</div>
           <div class="status" id="kaomoji">( &gt;_&lt; )</div>
         </div>
       </div>
-
       <div class="specs">
         <div class="spec-row">
           <span class="spec-k">do :</span>
@@ -433,20 +384,18 @@
         </div>
         <div class="spec-row">
           <span class="spec-k">lang :</span>
-          <span class="spec-v">rust, c++, c#, python, java, js</span>
+          <span class="spec-v">rust, c++, c#, python, java, node.js, html</span>
         </div>
         <div class="spec-row">
           <span class="spec-k">IDE :</span>
           <span class="spec-v">vscodium</span>
         </div>
       </div>
-
       <div class="hint-row">
         <span id="swipeText">swipe</span>
       </div>
     </div>
   </div>
-
   <div class="face" id="back">
     <canvas class="drops-canvas" id="dropsBack"></canvas>
     <div class="content-layer">
@@ -477,7 +426,6 @@
     </div>
   </div>
 </div>
-
 <button id="soundBtn" aria-label="Toggle sound">
   <svg id="svgSoundOn" viewBox="0 0 24 24">
     <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
@@ -490,7 +438,6 @@
     <line x1="17" y1="9" x2="23" y2="15"></line>
   </svg>
 </button>
-
 <script>
   const kaomojis = ['( >_< )', '( ⁄>⁄▽⁄<⁄ )', '( ˘︹˘ )', '( ¬_¬ )', '( ◕‿◕ )'];
   let kIdx = 0;
@@ -500,7 +447,6 @@
     kIdx = (kIdx + 1) % kaomojis.length;
     kaoEl.textContent = kaomojis[kIdx];
   });
-
   const stage = document.getElementById('stage');
   const front = document.getElementById('front');
   const back = document.getElementById('back');
@@ -509,9 +455,9 @@
   const backWrap = document.getElementById('backWrap');
   const bonsaiBox = document.getElementById('bonsaiBox');
   const swipeText = document.getElementById('swipeText');
-
   let side = 'front';
-  let rx = 0, ry = 0, vx = 0, vy = 0, tx = 0, ty = 0;
+  let rx = 0, ry = 0, vRx = 0, vRy = 0, tx = 0, ty = 0;
+  let lx = 25, ly = 15, targetLx = 25, targetLy = 15;
   let dragging = false;
   let startX = 0, startY = 0, lastX = 0, lastY = 0;
   let baseRx = 0, baseRy = 0;
@@ -519,24 +465,17 @@
   let shellStarted = false;
   let typeTimer = null;
   let hasEverFlipped = false;
-
   setTimeout(() => {
     if (hasEverFlipped || dragging) return;
     swipeText.classList.add('nudge');
-    ty = -34;
-    tx = 6;
-    setTimeout(() => {
-      if (dragging || hasEverFlipped) return;
-      ty = 12;
-      tx = -3;
-    }, 950);
+    ty = -26;
+    tx = 4;
     setTimeout(() => {
       if (dragging || hasEverFlipped) return;
       ty = 0;
       tx = 0;
-    }, 1850);
+    }, 1050);
   }, 32000);
-
   const PETALS = ['&', '@', '*', '%', '❀', '.'];
   const COLS = 29;
   const ROWS = 15;
@@ -545,16 +484,13 @@
   let blossomCells = [];
   let fallingPetals = [];
   let growTimer = null, swayTimer = null, spawnTimer = null, fallTimer = null;
-
   const irnd = n => Math.floor(Math.random() * n);
-
   function initGrid() {
     grid = Array.from({ length: ROWS }, () =>
       Array.from({ length: COLS }, () => ({ ch: ' ', cls: '' }))
     );
     blossomCells = [];
     fallingPetals = [];
-
     const r1 = ':_____________:';
     const r2 = ' \\___________/ ';
     const r3 = '  (_)     (_)  ';
@@ -567,19 +503,16 @@
     put(ROWS - 3, r1, 'b-pot');
     put(ROWS - 2, r2, 'b-pot');
     put(ROWS - 1, r3, 'b-pot');
-
     const gx = Math.floor((COLS - 11) / 2);
     for (let i = 0; i < 11; i++) {
       grid[ROWS - 3][gx + i] = { ch: i % 2 === 0 ? '.' : '-', cls: 'b-grass' };
     }
   }
-
   function setCell(x, y, ch, cls) {
     if (y >= 0 && y < ROWS - POT_ROWS && x >= 0 && x < COLS) {
       grid[y][x] = { ch, cls };
     }
   }
-
   function addCanopy(cx, cy, rxRad, ryRad, t0, ev) {
     for (let dy = -ryRad; dy <= ryRad; dy++) {
       for (let dx = -rxRad; dx <= rxRad; dx++) {
@@ -597,26 +530,21 @@
       }
     }
   }
-
   function planSakura() {
     const ev = [];
     const cx = Math.floor(COLS / 2);
     const base = ROWS - POT_ROWS - 1;
     const lean = Math.random() < 0.5 ? -1 : 1;
-
     ev.push({ t: 0, x: cx - 1, y: base, ch: '/', cls: 'b-dark' });
     ev.push({ t: 0, x: cx,     y: base, ch: '~', cls: 'b-wood' });
     ev.push({ t: 0, x: cx + 1, y: base, ch: '\\', cls: 'b-wood' });
-
     let tx = cx, ty = base;
     const trunkSteps = 6;
     const branchPoints = [];
-
     for (let i = 1; i <= trunkSteps; i++) {
       ty--;
       const drift = i > 2 ? (Math.random() < 0.6 ? lean : -lean) : 0;
       tx += drift;
-
       if (i <= 3) {
         ev.push({ t: i, x: tx - 1, y: ty, ch: drift < 0 ? '\\' : '/', cls: 'b-dark' });
         ev.push({ t: i, x: tx,     y: ty, ch: '|', cls: 'b-wood' });
@@ -624,12 +552,10 @@
       } else {
         ev.push({ t: i, x: tx, y: ty, ch: drift < 0 ? '\\' : (drift > 0 ? '/' : '|'), cls: 'b-wood' });
       }
-
       if (i === 2 || i === 4 || i === 6) {
         branchPoints.push({ x: tx, y: ty, t: i });
       }
     }
-
     const growLimb = (sx, sy, dir, len, tStart) => {
       let bx = sx, by = sy, bt = tStart;
       for (let s = 1; s <= len; s++) {
@@ -641,19 +567,15 @@
       }
       addCanopy(bx, Math.max(1, by - 1), 4 + irnd(2), 2, bt + 1, ev);
     };
-
     growLimb(branchPoints[0].x, branchPoints[0].y, -1, 5 + irnd(2), branchPoints[0].t);
     growLimb(branchPoints[0].x, branchPoints[0].y,  1, 4 + irnd(2), branchPoints[0].t + 1);
     growLimb(branchPoints[1].x, branchPoints[1].y, -lean, 4 + irnd(2), branchPoints[1].t);
     growLimb(branchPoints[1].x, branchPoints[1].y,  lean, 3 + irnd(2), branchPoints[1].t + 1);
-
     const top = branchPoints[2];
     addCanopy(top.x, Math.max(2, top.y - 1), 6, 2, top.t + 2, ev);
-
     ev.sort((a, b) => a.t - b.t);
     return ev;
   }
-
   function renderGrid() {
     const overlays = fallingPetals.map(f => {
       const old = grid[f.y][f.x];
@@ -677,23 +599,19 @@
     overlays.forEach(o => { grid[o.y][o.x] = o.old; });
     bonsaiBox.innerHTML = html;
   }
-
   function stopNature() {
     clearInterval(growTimer);
     clearInterval(swayTimer);
     clearInterval(spawnTimer);
     clearInterval(fallTimer);
   }
-
   function growSakura() {
     stopNature();
     initGrid();
     renderGrid();
-
     const ev = planSakura();
     const maxT = ev[ev.length - 1].t;
     let cursorT = 0;
-
     growTimer = setInterval(() => {
       while (cursorT <= maxT) {
         const batch = ev.filter(e => e.t === cursorT);
@@ -709,7 +627,6 @@
       }
       if (cursorT > maxT) {
         clearInterval(growTimer);
-
         swayTimer = setInterval(() => {
           if (!blossomCells.length) return;
           for (let i = 0; i < 3; i++) {
@@ -718,7 +635,6 @@
           }
           renderGrid();
         }, 280);
-
         spawnTimer = setInterval(() => {
           if (!blossomCells.length) return;
           const c = blossomCells[irnd(blossomCells.length)];
@@ -728,7 +644,6 @@
             cls: 'b-sak' + (1 + irnd(2))
           });
         }, 1600);
-
         fallTimer = setInterval(() => {
           fallingPetals.forEach(f => {
             f.y++;
@@ -741,7 +656,6 @@
       }
     }, 38);
   }
-
   function runShell() {
     if (shellStarted) return;
     shellStarted = true;
@@ -749,7 +663,6 @@
     cmdText.textContent = '';
     backWrap.classList.remove('show');
     cursor.style.display = 'inline-block';
-
     const word = 'fastfetch';
     let i = 0;
     function nextChar() {
@@ -768,7 +681,6 @@
     }
     typeTimer = setTimeout(nextChar, 120);
   }
-
   function resetShell() {
     shellStarted = false;
     clearTimeout(typeTimer);
@@ -777,7 +689,6 @@
     backWrap.classList.remove('show');
     cursor.style.display = 'inline-block';
   }
-
   stage.addEventListener('pointerdown', (e) => {
     ensureAudio();
     if (e.target.closest('a') || e.target.closest('#kaomoji')) return;
@@ -786,79 +697,74 @@
     startY = lastY = e.clientY;
     baseRx = rx;
     baseRy = ry;
-    vx = 0; vy = 0;
+    vRx = 0;
+    vRy = 0;
     axis = null;
     stage.setPointerCapture(e.pointerId);
   });
-
   window.addEventListener('pointermove', (e) => {
     const rect = stage.getBoundingClientRect();
-    const px = ((e.clientX - rect.left) / rect.width) * 100;
-    const py = ((e.clientY - rect.top) / rect.height) * 100;
-    document.documentElement.style.setProperty('--lx', `${px}%`);
-    document.documentElement.style.setProperty('--ly', `${py}%`);
-
+    targetLx = ((e.clientX - rect.left) / rect.width) * 100;
+    targetLy = ((e.clientY - rect.top) / rect.height) * 100;
     if (!dragging) return;
     const dx = e.clientX - startX;
     const dy = e.clientY - startY;
-    vx = (e.clientX - lastX) * 0.55;
-    vy = (e.clientY - lastY) * 0.55;
+    const stepX = e.clientX - lastX;
+    const stepY = e.clientY - lastY;
     lastX = e.clientX;
     lastY = e.clientY;
-
     if (!axis && Math.hypot(dx, dy) > 5) {
       axis = Math.abs(dx) >= Math.abs(dy) ? 'y' : 'x';
     }
     if (axis === 'y') {
-      ty = Math.max(-175, Math.min(175, baseRy + dx * 0.6));
-      tx = Math.max(-20, Math.min(20, baseRx - dy * 0.12));
+      vRy = vRy * 0.55 + stepX * 0.24;
+      vRx = vRx * 0.55 - stepY * 0.05;
+      ty = Math.max(-175, Math.min(175, baseRy + dx * 0.56));
+      tx = Math.max(-16, Math.min(16, baseRx - dy * 0.1));
     } else if (axis === 'x') {
-      tx = Math.max(-175, Math.min(175, baseRx - dy * 0.6));
-      ty = Math.max(-20, Math.min(20, baseRy + dx * 0.12));
+      vRx = vRx * 0.55 - stepY * 0.24;
+      vRy = vRy * 0.55 + stepX * 0.05;
+      tx = Math.max(-175, Math.min(175, baseRx - dy * 0.56));
+      ty = Math.max(-16, Math.min(16, baseRy + dx * 0.1));
     }
   });
-
   function onRelease() {
     if (!dragging) return;
     dragging = false;
-    const predictY = ry + vy * 6;
-    const predictX = rx - vy * 6;
-
-    if (axis === 'y' && Math.abs(predictY) > 38) {
+    const predictY = ry + vRy * 7;
+    const predictX = rx + vRx * 7;
+    if (axis === 'y' && Math.abs(predictY) > 36) {
       const dir = predictY > 0 ? 1 : -1;
       side = side === 'front' ? 'back' : 'front';
       hasEverFlipped = true;
       ry = ry - dir * 180;
       rx = -rx;
+      vRx = -vRx * 0.4;
       if (side === 'front') resetShell();
-    } else if (axis === 'x' && Math.abs(predictX) > 38) {
+    } else if (axis === 'x' && Math.abs(predictX) > 36) {
       const dir = predictX > 0 ? 1 : -1;
       side = side === 'front' ? 'back' : 'front';
       hasEverFlipped = true;
       rx = rx - dir * 180;
       ry = -ry;
+      vRy = -vRy * 0.4;
       if (side === 'front') resetShell();
     }
-    tx = 0; ty = 0;
+    tx = 0;
+    ty = 0;
   }
-
   stage.addEventListener('pointerup', onRelease);
   stage.addEventListener('pointercancel', onRelease);
-
   const bgImage = new Image();
-  bgImage.crossOrigin = 'anonymous';
-  bgImage.src = 'https://wsrv.nl/?url=https://files.catbox.moe/tyxu2k.jpg';
-
+  bgImage.src = 'https://wsrv.nl/?url=https://files.catbox.moe/tyxu2k.jpg&output=webp&q=85';
   const rainCanvas = document.getElementById('rainBg');
   const rCtx = rainCanvas.getContext('2d');
   const dropsFront = document.getElementById('dropsFront');
   const dropsBack = document.getElementById('dropsBack');
   const dfCtx = dropsFront.getContext('2d');
   const dbCtx = dropsBack.getContext('2d');
-
   let rainStreaks = [];
   let glassDrops = [];
-
   function makeGlassDrop(w, h, randomY = false) {
     const isBead = Math.random() < 0.55;
     const r = isBead ? 1.1 + Math.random() * 1.3 : 2.5 + Math.random() * 2.2;
@@ -867,18 +773,17 @@
       y: randomY ? 12 + Math.random() * (h - 24) : -6,
       r,
       vy: 0,
+      targetVy: 0,
       slipTimer: isBead ? 200 + irnd(500) : irnd(140),
       wobbleSeed: Math.random() * 100
     };
   }
-
   function resizeCanvases() {
     rainCanvas.width = window.innerWidth;
     rainCanvas.height = window.innerHeight;
     const rect = stage.getBoundingClientRect();
     dropsFront.width = dropsBack.width = rect.width;
     dropsFront.height = dropsBack.height = rect.height;
-
     rainStreaks = Array.from({ length: 80 }, () => ({
       x: Math.random() * rainCanvas.width,
       y: Math.random() * rainCanvas.height,
@@ -886,19 +791,16 @@
       spd: 11 + Math.random() * 7,
       alpha: 0.06 + Math.random() * 0.12
     }));
-
     if (!glassDrops.length) {
       for (let i = 0; i < 24; i++) {
         glassDrops.push(makeGlassDrop(rect.width, rect.height, true));
       }
     }
   }
-
   window.addEventListener('resize', resizeCanvases);
   resizeCanvases();
-
   function drawDropPath(ctx, x, y, r, vy) {
-    const stretch = Math.min(1.65, 1 + vy * 0.28);
+    const stretch = Math.min(1.6, 1 + vy * 0.25);
     const topY = y - r * stretch * 1.15;
     const botY = y + r * 0.95;
     ctx.beginPath();
@@ -907,68 +809,60 @@
     ctx.bezierCurveTo(x - r * 1.05, botY - r * 0.2, x - r * 0.85, y - r * 0.2, x, topY);
     ctx.closePath();
   }
-
   function renderGlassDrops(ctx, w, h) {
     ctx.clearRect(0, 0, w, h);
-    const tiltX = (ry / 90) * 0.35;
-
+    const tiltX = (ry / 90) * 0.28;
     for (let i = 0; i < glassDrops.length; i++) {
       const d = glassDrops[i];
-
       d.slipTimer--;
       if (d.slipTimer <= 0 && d.r > 2.3) {
-        d.vy = 1.2 + (d.r - 2.0) * 0.45;
-        d.slipTimer = 90 + irnd(220);
+        d.targetVy = 0.95 + (d.r - 2.0) * 0.38;
+        d.slipTimer = 110 + irnd(240);
       }
-
-      if (d.vy > 0.04) {
+      d.vy += (d.targetVy - d.vy) * 0.14;
+      d.targetVy *= 0.96;
+      if (d.vy > 0.03) {
         d.y += d.vy;
-        d.x += Math.sin(d.y * 0.11 + d.wobbleSeed) * 0.28 + tiltX;
-        d.vy *= 0.94;
-
-        if (d.vy > 0.7 && Math.random() < 0.22 && d.r > 2.6 && glassDrops.length < 32) {
-          d.r -= 0.18;
+        d.x += Math.sin(d.y * 0.07 + d.wobbleSeed) * 0.2 + tiltX;
+        if (d.vy > 0.65 && Math.random() < 0.18 && d.r > 2.6 && glassDrops.length < 32) {
+          d.r -= 0.16;
           glassDrops.push({
-            x: d.x + (Math.random() - 0.5) * 0.8,
-            y: d.y - d.r * 1.6,
-            r: 1.0 + Math.random() * 0.6,
+            x: d.x + (Math.random() - 0.5) * 0.6,
+            y: d.y - d.r * 1.5,
+            r: 1.0 + Math.random() * 0.55,
             vy: 0,
-            slipTimer: 400 + irnd(400),
+            targetVy: 0,
+            slipTimer: 420 + irnd(400),
             wobbleSeed: Math.random() * 100
           });
         }
       } else {
         d.vy = 0;
-        if (Math.random() < 0.008) d.r = Math.min(4.8, d.r + 0.12);
+        if (Math.random() < 0.008) d.r = Math.min(4.8, d.r + 0.1);
       }
-
       for (let j = i + 1; j < glassDrops.length; j++) {
         const o = glassDrops[j];
         const dist = Math.hypot(d.x - o.x, d.y - o.y);
         if (dist < (d.r + o.r) * 0.95) {
           d.r = Math.min(4.9, Math.hypot(d.r, o.r * 0.8));
-          if (d.r > 2.8) d.vy = Math.max(d.vy, 1.1);
+          if (d.r > 2.8) d.targetVy = Math.max(d.targetVy, 0.95);
           glassDrops.splice(j, 1);
           break;
         }
       }
-
       if (d.y > h + 10 || d.x < -10 || d.x > w + 10) {
         glassDrops[i] = makeGlassDrop(w, h, false);
         continue;
       }
-
       ctx.save();
       ctx.beginPath();
       ctx.arc(d.x + 0.6, d.y + d.r * 0.35, d.r * 0.92, 0, Math.PI * 2);
       ctx.fillStyle = 'rgba(0, 0, 0, 0.22)';
       ctx.fill();
       ctx.restore();
-
       ctx.save();
       drawDropPath(ctx, d.x, d.y, d.r, d.vy);
       ctx.clip();
-
       if (bgImage.complete && bgImage.naturalWidth > 0) {
         const sx = ((d.x / w) * 0.6 + 0.2) * bgImage.naturalWidth;
         const sy = ((d.y / h) * 0.6 + 0.2) * bgImage.naturalHeight;
@@ -979,7 +873,6 @@
           d.x - d.r * 1.4, d.y - d.r * 1.6, d.r * 2.8, d.r * 3.2
         );
       }
-
       const grad = ctx.createLinearGradient(d.x - d.r, d.y - d.r, d.x + d.r, d.y + d.r);
       grad.addColorStop(0, 'rgba(10, 16, 13, 0.42)');
       grad.addColorStop(0.5, 'rgba(255, 255, 255, 0.04)');
@@ -987,42 +880,43 @@
       ctx.fillStyle = grad;
       ctx.fillRect(d.x - d.r * 2, d.y - d.r * 2, d.r * 4, d.r * 4);
       ctx.restore();
-
       ctx.save();
       drawDropPath(ctx, d.x, d.y, d.r, d.vy);
       ctx.lineWidth = 0.55;
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.28)';
       ctx.stroke();
-
       ctx.beginPath();
       ctx.arc(d.x - d.r * 0.32, d.y - d.r * 0.28, Math.max(0.45, d.r * 0.22), 0, Math.PI * 2);
       ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
       ctx.fill();
       ctx.restore();
     }
-
     if (glassDrops.length < 22 && Math.random() < 0.04) {
       glassDrops.push(makeGlassDrop(w, h, true));
     }
   }
-
   function animate() {
+    lx += (targetLx - lx) * 0.12;
+    ly += (targetLy - ly) * 0.12;
+    document.documentElement.style.setProperty('--lx', `${lx.toFixed(1)}%`);
+    document.documentElement.style.setProperty('--ly', `${ly.toFixed(1)}%`);
+
     if (dragging) {
-      rx += (tx - rx) * 0.42;
-      ry += (ty - ry) * 0.42;
+      rx += (tx - rx) * 0.24;
+      ry += (ty - ry) * 0.24;
     } else {
-      vx = (vx + (tx - rx) * 0.1) * 0.78;
-      vy = (vy + (ty - ry) * 0.1) * 0.78;
-      rx += vx;
-      ry += vy;
+      vRx = (vRx + (tx - rx) * 0.052) * 0.62;
+      vRy = (vRy + (ty - ry) * 0.052) * 0.62;
+      rx += vRx;
+      ry += vRy;
+      if (Math.abs(tx - rx) < 0.02 && Math.abs(vRx) < 0.02) { rx = tx; vRx = 0; }
+      if (Math.abs(ty - ry) < 0.02 && Math.abs(vRy) < 0.02) { ry = ty; vRy = 0; }
       if (side === 'back' && !shellStarted && Math.abs(rx) < 55 && Math.abs(ry) < 55) runShell();
     }
-
     const activeEl = side === 'front' ? front : back;
     const hiddenEl = side === 'front' ? back : front;
     const useX = axis === 'x' || Math.abs(rx) > Math.abs(ry);
     const over90 = Math.abs(rx) > 90 || Math.abs(ry) > 90;
-
     let secRx = rx, secRy = ry;
     if (useX) {
       secRx = rx + (rx >= 0 ? -180 : 180);
@@ -1031,10 +925,8 @@
       secRy = ry + (ry >= 0 ? -180 : 180);
       secRx = -rx;
     }
-
     activeEl.style.transform = `perspective(1100px) rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg)`;
     hiddenEl.style.transform = `perspective(1100px) rotateX(${secRx.toFixed(2)}deg) rotateY(${secRy.toFixed(2)}deg)`;
-
     if (!over90) {
       activeEl.style.opacity = '1';
       activeEl.style.pointerEvents = 'auto';
@@ -1046,7 +938,6 @@
       hiddenEl.style.opacity = '1';
       hiddenEl.style.pointerEvents = 'auto';
     }
-
     rCtx.clearRect(0, 0, rainCanvas.width, rainCanvas.height);
     rCtx.lineWidth = 1;
     for (const s of rainStreaks) {
@@ -1062,22 +953,17 @@
         s.x = Math.random() * (rainCanvas.width + 120);
       }
     }
-
     const activeCtx = (side === 'front' && !over90) || (side === 'back' && over90) ? dfCtx : dbCtx;
     renderGlassDrops(activeCtx, dropsFront.width, dropsFront.height);
-
     requestAnimationFrame(animate);
   }
-
   requestAnimationFrame(animate);
-
   let audioCtx = null;
   let masterGain = null;
   let isMuted = false;
   const soundBtn = document.getElementById('soundBtn');
   const svgSoundOn = document.getElementById('svgSoundOn');
   const svgSoundOff = document.getElementById('svgSoundOff');
-
   function ensureAudio() {
     if (audioCtx) {
       if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -1087,14 +973,12 @@
     if (!Ctx) return;
     audioCtx = new Ctx();
     if (audioCtx.state === 'suspended') audioCtx.resume();
-
     const rate = audioCtx.sampleRate;
     const len = rate * 6;
     const pinkBuf = audioCtx.createBuffer(1, len, rate);
     const whiteBuf = audioCtx.createBuffer(1, len, rate);
     const pData = pinkBuf.getChannelData(0);
     const wData = whiteBuf.getChannelData(0);
-
     let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
     for (let i = 0; i < len; i++) {
       const w = Math.random() * 2 - 1;
@@ -1108,12 +992,10 @@
       pData[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + w * 0.5362) * 0.045;
       b6 = w * 0.115926;
     }
-
     masterGain = audioCtx.createGain();
     masterGain.gain.setValueAtTime(0.01, audioCtx.currentTime);
     masterGain.gain.exponentialRampToValueAtTime(0.55, audioCtx.currentTime + 2.0);
     masterGain.connect(audioCtx.destination);
-
     const rainBed = audioCtx.createBufferSource();
     rainBed.buffer = pinkBuf;
     rainBed.loop = true;
@@ -1127,7 +1009,6 @@
     rainFilter.connect(rainGain);
     rainGain.connect(masterGain);
     rainBed.start();
-
     const mistSrc = audioCtx.createBufferSource();
     mistSrc.buffer = whiteBuf;
     mistSrc.loop = true;
@@ -1144,7 +1025,6 @@
     mistLp.connect(mistGain);
     mistGain.connect(masterGain);
     mistSrc.start(0, 1.7);
-
     const forestWind = audioCtx.createBufferSource();
     forestWind.buffer = pinkBuf;
     forestWind.loop = true;
@@ -1157,7 +1037,6 @@
     windLp.connect(windGain);
     windGain.connect(masterGain);
     forestWind.start(0, 3.2);
-
     const lfo = audioCtx.createOscillator();
     lfo.frequency.value = 0.08;
     const lfoG = audioCtx.createGain();
@@ -1165,7 +1044,6 @@
     lfo.connect(lfoG);
     lfoG.connect(windLp.frequency);
     lfo.start();
-
     setInterval(() => {
       if (!audioCtx || isMuted || audioCtx.state !== 'running') return;
       if (Math.random() < 0.65) {
@@ -1176,11 +1054,9 @@
         osc.type = 'sine';
         osc.frequency.setValueAtTime(baseFreq, now);
         osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.35, now + 0.025);
-
         g.gain.setValueAtTime(0.0001, now);
         g.gain.linearRampToValueAtTime(0.015 + Math.random() * 0.02, now + 0.004);
         g.gain.exponentialRampToValueAtTime(0.0001, now + 0.032);
-
         osc.connect(g);
         g.connect(masterGain);
         osc.start(now);
@@ -1188,9 +1064,7 @@
       }
     }, 55);
   }
-
   window.addEventListener('pointerdown', ensureAudio);
-
   soundBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     if (!audioCtx) {
