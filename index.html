@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="referrer" content="no-referrer">
+<title>Yumisora</title>
+<style>
+  :root {
+    --lx: 25%;
+    --ly: 15%;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  body {
+    width: 100vw;
+    height: 100dvh;
+    overflow: hidden;
+    background-color: #111614;
+    background-image: 
+      url('https://wsrv.nl/?url=https://files.catbox.moe/tyxu2k.jpg'),
+      url('https://files.catbox.moe/tyxu2k.jpg');
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #f0f5f2;
+  }
+
+  #rainBg {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .stage {
+    width: min(475px, 92vw);
+    aspect-ratio: 1.586 / 1;
+    position: relative;
+    touch-action: none;
+    cursor: grab;
+    z-index: 2;
+  }
+
+  .stage:active { cursor: grabbing; }
+
+  .face {
+    position: absolute;
+    inset: 0;
+    border-radius: 24px;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.02) 50%,
+      rgba(255, 255, 255, 0.06) 100%
+    );
+    backdrop-filter: blur(7px) saturate(135%) brightness(1.08);
+    -webkit-backdrop-filter: blur(7px) saturate(135%) brightness(1.08);
+    box-shadow:
+      0 24px 48px rgba(0, 0, 0, 0.42),
+      inset 0 1.5px 1px rgba(255, 255, 255, 0.65),
+      inset 0 -1px 1px rgba(255, 255, 255, 0.2),
+      inset 1px 0 1px rgba(255, 255, 255, 0.25),
+      inset -1px 0 1px rgba(255, 255, 255, 0.15),
+      inset 0 0 28px rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+    will-change: transform, opacity;
+  }
+
+  .face::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(320px circle at var(--lx) var(--ly), rgba(255, 255, 255, 0.24), transparent 60%),
+      linear-gradient(115deg, rgba(255,255,255,0.14) 0%, transparent 28%, transparent 72%, rgba(255,255,255,0.09) 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .face::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 24px;
+    padding: 1.2px;
+    background: linear-gradient(
+      140deg,
+      rgba(255, 255, 255, 0.75) 0%,
+      rgba(255, 255, 255, 0.15) 35%,
+      rgba(255, 255, 255, 0.05) 65%,
+      rgba(255, 255, 255, 0.45) 100%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: 4;
+  }
+
+  .drops-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 3;
+  }
+
+  .content-layer {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  #front {
+    padding: 26px 28px;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+  }
+
+  .top-row {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .avatar {
+    width: 74px;
+    height: 74px;
+    border-radius: 16px;
+    object-fit: cover;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.32);
+    pointer-events: none;
+    flex-shrink: 0;
+  }
+
+  .name-block {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .name {
+    font-size: 22px;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: -0.02em;
+  }
+
+  .status {
+    font-size: 12.5px;
+    color: #e8f2ec;
+    font-family: ui-monospace, "Cascadia Code", Menlo, Consolas, monospace;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 2px 9px;
+    border-radius: 99px;
+    width: fit-content;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .status:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .specs {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-family: ui-monospace, "Cascadia Code", Menlo, Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .spec-row {
+    display: grid;
+    grid-template-columns: 52px 1fr;
+    align-items: baseline;
+  }
+
+  .spec-k {
+    color: rgba(215, 232, 223, 0.78);
+  }
+
+  .spec-v {
+    color: #fff;
+  }
+
+  .hint-row {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    font-family: ui-monospace, Menlo, Consolas, monospace;
+    font-size: 11.5px;
+    color: rgba(240, 245, 242, 0.7);
+  }
+
+  #swipeText {
+    position: relative;
+    display: inline-block;
+    transition: transform 0.3s ease, color 0.3s ease;
+  }
+
+  #swipeText.nudge {
+    color: #fff;
+    animation: swipePulse 2.4s ease-in-out forwards;
+  }
+
+  @keyframes swipePulse {
+    0%   { transform: translateX(0); opacity: 0.7; }
+    30%  { transform: translateX(-14px); opacity: 1; }
+    60%  { transform: translateX(4px); opacity: 1; }
+    100% { transform: translateX(0); opacity: 0.7; }
+  }
+
+  #back {
+    background: linear-gradient(
+      135deg,
+      rgba(14, 20, 17, 0.22) 0%,
+      rgba(8, 12, 10, 0.32) 100%
+    );
+    padding: 18px 24px;
+    font-family: ui-monospace, "Cascadia Code", Menlo, Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.35;
+    opacity: 0;
+    pointer-events: none;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.75);
+  }
+
+  .shell-line {
+    margin-bottom: 6px;
+    color: #d4e8dc;
+    white-space: nowrap;
+  }
+
+  #cmdText { color: #fff; }
+
+  .cursor {
+    display: inline-block;
+    width: 6px;
+    height: 13px;
+    background: #f5b8c9;
+    vertical-align: middle;
+    margin-left: 2px;
+    animation: blink 0.9s step-end infinite;
+  }
+
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .back-wrap {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 24px;
+    flex: 1;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .back-wrap.show { opacity: 1; }
+
+  .bonsai {
+    white-space: pre;
+    font-size: 9.2px;
+    line-height: 1.05;
+    letter-spacing: 0;
+    font-variant-ligatures: none;
+  }
+
+  .b-wood  { color: #b89882; }
+  .b-dark  { color: #8f725e; }
+  .b-sak1  { color: #ffd9e6; }
+  .b-sak2  { color: #f7a8c2; }
+  .b-sak3  { color: #e3789b; }
+  .b-pot   { color: #b7c4be; }
+  .b-grass { color: #8eb89f; }
+
+  .info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+  }
+
+  .info-head {
+    color: #fff;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.01em;
+  }
+
+  .info-rule {
+    color: rgba(255, 255, 255, 0.32);
+    font-size: 11px;
+    margin: 3px 0 12px;
+  }
+
+  .soc-list {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+  }
+
+  .soc {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    color: #f0f5f2;
+    font-size: 12.5px;
+  }
+
+  .soc svg {
+    width: 17px;
+    height: 17px;
+    fill: #ffd4e2;
+    flex-shrink: 0;
+    filter: drop-shadow(0 1px 3px rgba(0,0,0,0.4));
+  }
+
+  .soc a {
+    color: #fff;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.38);
+    transition: border-color 0.15s;
+  }
+
+  .soc a:hover {
+    border-color: #fff;
+  }
+
+  .soc .soon {
+    color: rgba(240, 245, 242, 0.52);
+  }
+
+  #soundBtn {
+    position: fixed;
+    bottom: 18px;
+    right: 20px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.15) 0%,
+      rgba(255, 255, 255, 0.03) 100%
+    );
+    backdrop-filter: blur(8px) saturate(140%) brightness(1.1);
+    -webkit-backdrop-filter: blur(8px) saturate(140%) brightness(1.1);
+    border: 1px solid rgba(255, 255, 255, 0.38);
+    box-shadow:
+      0 8px 20px rgba(0, 0, 0, 0.35),
+      inset 0 1px 1px rgba(255, 255, 255, 0.6),
+      inset 0 -1px 1px rgba(255, 255, 255, 0.15);
+    color: #f0f5f2;
+    cursor: pointer;
+    z-index: 10;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+  }
+
+  #soundBtn:hover {
+    transform: scale(1.06);
+    border-color: rgba(255, 255, 255, 0.7);
+  }
+
+  #soundBtn svg {
+    width: 17px;
+    height: 17px;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 1.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.45));
+  }
+
+  @media (max-width: 460px) {
+    #front { padding: 18px 20px; }
+    .avatar { width: 60px; height: 60px; }
+    .name { font-size: 19px; }
+    .specs { font-size: 11.5px; }
+    .spec-row { grid-template-columns: 44px 1fr; }
+    #back { padding: 14px 16px; font-size: 11px; }
+    .back-wrap { gap: 14px; }
+    .bonsai { font-size: 7.5px; }
+  }
+</style>
+</head>
+<body ondragstart="return false;">
+
+<canvas id="rainBg"></canvas>
+
+<div class="stage" id="stage">
+  <div class="face" id="front">
+    <canvas class="drops-canvas" id="dropsFront"></canvas>
+    <div class="content-layer">
+      <div class="top-row">
+        <img src="https://wsrv.nl/?url=https://files.catbox.moe/w0f50f.jpg"
+             onerror="if(this.src.includes('wsrv')) this.src='https://files.catbox.moe/w0f50f.jpg'"
+             class="avatar" alt="">
+        <div class="name-block">
+          <div class="name">Yumisora</div>
+          <div class="status" id="kaomoji">( &gt;_&lt; )</div>
+        </div>
+      </div>
+
+      <div class="specs">
+        <div class="spec-row">
+          <span class="spec-k">do :</span>
+          <span class="spec-v">reverse engineering, modding, coding</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-k">lang :</span>
+          <span class="spec-v">rust, c++, c#, python, java, node.js, html</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-k">IDE :</span>
+          <span class="spec-v">vscodium</span>
+        </div>
+      </div>
+
+      <div class="hint-row">
+        <span id="swipeText">swipe</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="face" id="back">
+    <canvas class="drops-canvas" id="dropsBack"></canvas>
+    <div class="content-layer">
+      <div class="shell-line">
+        <span>yumisora ~ $ </span><span id="cmdText"></span><span class="cursor" id="cursor"></span>
+      </div>
+      <div class="back-wrap" id="backWrap">
+        <pre class="bonsai" id="bonsaiBox"></pre>
+        <div class="info">
+          <div class="info-head">yumisora</div>
+          <div class="info-rule">──────────────</div>
+          <div class="soc-list">
+            <div class="soc">
+              <svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+              <a href="https://t.me/hook_dll" target="_blank" rel="noopener">@hook_dll</a>
+            </div>
+            <div class="soc">
+              <svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+              <span class="soon">soon</span>
+            </div>
+            <div class="soc">
+              <svg viewBox="0 0 24 24"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></svg>
+              <span class="soon">soon</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<button id="soundBtn" aria-label="Toggle sound">
+  <svg id="svgSoundOn" viewBox="0 0 24 24">
+    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+    <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+  </svg>
+  <svg id="svgSoundOff" viewBox="0 0 24 24" style="display:none">
+    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+    <line x1="23" y1="9" x2="17" y2="15"></line>
+    <line x1="17" y1="9" x2="23" y2="15"></line>
+  </svg>
+</button>
+
+<script>
+  const kaomojis = ['( >_< )', '( ⁄>⁄▽⁄<⁄ )', '( ˘︹˘ )', '( ¬_¬ )', '( ◕‿◕ )'];
+  let kIdx = 0;
+  const kaoEl = document.getElementById('kaomoji');
+  kaoEl.addEventListener('click', (e) => {
+    e.stopPropagation();
+    kIdx = (kIdx + 1) % kaomojis.length;
+    kaoEl.textContent = kaomojis[kIdx];
+  });
+
+  const stage = document.getElementById('stage');
+  const front = document.getElementById('front');
+  const back = document.getElementById('back');
+  const cmdText = document.getElementById('cmdText');
+  const cursor = document.getElementById('cursor');
+  const backWrap = document.getElementById('backWrap');
+  const bonsaiBox = document.getElementById('bonsaiBox');
+  const swipeText = document.getElementById('swipeText');
+
+  let side = 'front';
+  let rx = 0, ry = 0, vx = 0, vy = 0, tx = 0, ty = 0;
+  let dragging = false;
+  let startX = 0, startY = 0, lastX = 0, lastY = 0;
+  let baseRx = 0, baseRy = 0;
+  let axis = null;
+  let shellStarted = false;
+  let typeTimer = null;
+  let hasEverFlipped = false;
+
+  setTimeout(() => {
+    if (hasEverFlipped || dragging) return;
+    swipeText.classList.add('nudge');
+    ty = -34;
+    tx = 6;
+    setTimeout(() => {
+      if (dragging || hasEverFlipped) return;
+      ty = 12;
+      tx = -3;
+    }, 950);
+    setTimeout(() => {
+      if (dragging || hasEverFlipped) return;
+      ty = 0;
+      tx = 0;
+    }, 1850);
+  }, 32000);
+
+  const PETALS = ['&', '@', '*', '%', '❀', '.'];
+  const COLS = 29;
+  const ROWS = 15;
+  const POT_ROWS = 3;
+  let grid = [];
+  let blossomCells = [];
+  let fallingPetals = [];
+  let growTimer = null, swayTimer = null, spawnTimer = null, fallTimer = null;
+
+  const irnd = n => Math.floor(Math.random() * n);
+
+  function initGrid() {
+    grid = Array.from({ length: ROWS }, () =>
+      Array.from({ length: COLS }, () => ({ ch: ' ', cls: '' }))
+    );
+    blossomCells = [];
+    fallingPetals = [];
+
+    const r1 = ':_____________:';
+    const r2 = ' \\___________/ ';
+    const r3 = '  (_)     (_)  ';
+    const put = (row, s, cls) => {
+      const x0 = Math.floor((COLS - s.length) / 2);
+      for (let i = 0; i < s.length; i++) {
+        if (s[i] !== ' ') grid[row][x0 + i] = { ch: s[i], cls };
+      }
+    };
+    put(ROWS - 3, r1, 'b-pot');
+    put(ROWS - 2, r2, 'b-pot');
+    put(ROWS - 1, r3, 'b-pot');
+
+    const gx = Math.floor((COLS - 11) / 2);
+    for (let i = 0; i < 11; i++) {
+      grid[ROWS - 3][gx + i] = { ch: i % 2 === 0 ? '.' : '-', cls: 'b-grass' };
+    }
+  }
+
+  function setCell(x, y, ch, cls) {
+    if (y >= 0 && y < ROWS - POT_ROWS && x >= 0 && x < COLS) {
+      grid[y][x] = { ch, cls };
+    }
+  }
+
+  function addCanopy(cx, cy, rxRad, ryRad, t0, ev) {
+    for (let dy = -ryRad; dy <= ryRad; dy++) {
+      for (let dx = -rxRad; dx <= rxRad; dx++) {
+        const norm = (dx * dx) / (rxRad * rxRad + 0.5) + (dy * dy) / (ryRad * ryRad + 0.5);
+        if (norm <= 1.05 && Math.random() < 0.82) {
+          const shade = dy < 0 ? 'b-sak1' : (Math.random() < 0.55 ? 'b-sak2' : 'b-sak3');
+          ev.push({
+            t: t0 + Math.abs(dx) + Math.abs(dy) + irnd(3),
+            x: cx + dx,
+            y: cy + dy,
+            ch: PETALS[irnd(PETALS.length)],
+            cls: shade
+          });
+        }
+      }
+    }
+  }
+
+  function planSakura() {
+    const ev = [];
+    const cx = Math.floor(COLS / 2);
+    const base = ROWS - POT_ROWS - 1;
+    const lean = Math.random() < 0.5 ? -1 : 1;
+
+    ev.push({ t: 0, x: cx - 1, y: base, ch: '/', cls: 'b-dark' });
+    ev.push({ t: 0, x: cx,     y: base, ch: '~', cls: 'b-wood' });
+    ev.push({ t: 0, x: cx + 1, y: base, ch: '\\', cls: 'b-wood' });
+
+    let tx = cx, ty = base;
+    const trunkSteps = 6;
+    const branchPoints = [];
+
+    for (let i = 1; i <= trunkSteps; i++) {
+      ty--;
+      const drift = i > 2 ? (Math.random() < 0.6 ? lean : -lean) : 0;
+      tx += drift;
+
+      if (i <= 3) {
+        ev.push({ t: i, x: tx - 1, y: ty, ch: drift < 0 ? '\\' : '/', cls: 'b-dark' });
+        ev.push({ t: i, x: tx,     y: ty, ch: '|', cls: 'b-wood' });
+        if (i === 1) ev.push({ t: i, x: tx + 1, y: ty, ch: '\\', cls: 'b-wood' });
+      } else {
+        ev.push({ t: i, x: tx, y: ty, ch: drift < 0 ? '\\' : (drift > 0 ? '/' : '|'), cls: 'b-wood' });
+      }
+
+      if (i === 2 || i === 4 || i === 6) {
+        branchPoints.push({ x: tx, y: ty, t: i });
+      }
+    }
+
+    const growLimb = (sx, sy, dir, len, tStart) => {
+      let bx = sx, by = sy, bt = tStart;
+      for (let s = 1; s <= len; s++) {
+        bx += dir;
+        if (s % 2 === 1 && by > 2) by--;
+        bt++;
+        const ch = s % 2 === 1 ? (dir < 0 ? '\\' : '/') : '~';
+        ev.push({ t: bt, x: bx, y: by, ch, cls: dir < 0 ? 'b-dark' : 'b-wood' });
+      }
+      addCanopy(bx, Math.max(1, by - 1), 4 + irnd(2), 2, bt + 1, ev);
+    };
+
+    growLimb(branchPoints[0].x, branchPoints[0].y, -1, 5 + irnd(2), branchPoints[0].t);
+    growLimb(branchPoints[0].x, branchPoints[0].y,  1, 4 + irnd(2), branchPoints[0].t + 1);
+    growLimb(branchPoints[1].x, branchPoints[1].y, -lean, 4 + irnd(2), branchPoints[1].t);
+    growLimb(branchPoints[1].x, branchPoints[1].y,  lean, 3 + irnd(2), branchPoints[1].t + 1);
+
+    const top = branchPoints[2];
+    addCanopy(top.x, Math.max(2, top.y - 1), 6, 2, top.t + 2, ev);
+
+    ev.sort((a, b) => a.t - b.t);
+    return ev;
+  }
+
+  function renderGrid() {
+    const overlays = fallingPetals.map(f => {
+      const old = grid[f.y][f.x];
+      grid[f.y][f.x] = { ch: f.ch, cls: f.cls };
+      return { x: f.x, y: f.y, old };
+    });
+    let html = '';
+    for (let y = 0; y < ROWS; y++) {
+      let cur = '', buf = '';
+      for (let x = 0; x < COLS; x++) {
+        const c = grid[y][x];
+        if (c.cls !== cur) {
+          if (buf) html += cur ? `<span class="${cur}">${buf}</span>` : buf;
+          cur = c.cls;
+          buf = c.ch;
+        } else buf += c.ch;
+      }
+      if (buf) html += cur ? `<span class="${cur}">${buf}</span>` : buf;
+      if (y < ROWS - 1) html += '\n';
+    }
+    overlays.forEach(o => { grid[o.y][o.x] = o.old; });
+    bonsaiBox.innerHTML = html;
+  }
+
+  function stopNature() {
+    clearInterval(growTimer);
+    clearInterval(swayTimer);
+    clearInterval(spawnTimer);
+    clearInterval(fallTimer);
+  }
+
+  function growSakura() {
+    stopNature();
+    initGrid();
+    renderGrid();
+
+    const ev = planSakura();
+    const maxT = ev[ev.length - 1].t;
+    let cursorT = 0;
+
+    growTimer = setInterval(() => {
+      while (cursorT <= maxT) {
+        const batch = ev.filter(e => e.t === cursorT);
+        cursorT++;
+        if (batch.length) {
+          batch.forEach(e => {
+            setCell(e.x, e.y, e.ch, e.cls);
+            if (e.cls.startsWith('b-sak')) blossomCells.push({ x: e.x, y: e.y });
+          });
+          renderGrid();
+          break;
+        }
+      }
+      if (cursorT > maxT) {
+        clearInterval(growTimer);
+
+        swayTimer = setInterval(() => {
+          if (!blossomCells.length) return;
+          for (let i = 0; i < 3; i++) {
+            const c = blossomCells[irnd(blossomCells.length)];
+            setCell(c.x, c.y, PETALS[irnd(PETALS.length)], 'b-sak' + (1 + irnd(3)));
+          }
+          renderGrid();
+        }, 280);
+
+        spawnTimer = setInterval(() => {
+          if (!blossomCells.length) return;
+          const c = blossomCells[irnd(blossomCells.length)];
+          fallingPetals.push({
+            x: c.x, y: c.y,
+            ch: Math.random() < 0.5 ? '*' : '.',
+            cls: 'b-sak' + (1 + irnd(2))
+          });
+        }, 1600);
+
+        fallTimer = setInterval(() => {
+          fallingPetals.forEach(f => {
+            f.y++;
+            if (Math.random() < 0.55) f.x += Math.random() < 0.6 ? 1 : -1;
+            f.x = Math.max(0, Math.min(COLS - 1, f.x));
+          });
+          fallingPetals = fallingPetals.filter(f => f.y < ROWS - POT_ROWS);
+          renderGrid();
+        }, 150);
+      }
+    }, 38);
+  }
+
+  function runShell() {
+    if (shellStarted) return;
+    shellStarted = true;
+    clearTimeout(typeTimer);
+    cmdText.textContent = '';
+    backWrap.classList.remove('show');
+    cursor.style.display = 'inline-block';
+
+    const word = 'fastfetch';
+    let i = 0;
+    function nextChar() {
+      if (side !== 'back') return;
+      if (i < word.length) {
+        cmdText.textContent += word[i++];
+        typeTimer = setTimeout(nextChar, 45 + Math.random() * 35);
+      } else {
+        typeTimer = setTimeout(() => {
+          if (side !== 'back') return;
+          cursor.style.display = 'none';
+          backWrap.classList.add('show');
+          growSakura();
+        }, 140);
+      }
+    }
+    typeTimer = setTimeout(nextChar, 120);
+  }
+
+  function resetShell() {
+    shellStarted = false;
+    clearTimeout(typeTimer);
+    stopNature();
+    cmdText.textContent = '';
+    backWrap.classList.remove('show');
+    cursor.style.display = 'inline-block';
+  }
+
+  stage.addEventListener('pointerdown', (e) => {
+    ensureAudio();
+    if (e.target.closest('a') || e.target.closest('#kaomoji')) return;
+    dragging = true;
+    startX = lastX = e.clientX;
+    startY = lastY = e.clientY;
+    baseRx = rx;
+    baseRy = ry;
+    vx = 0; vy = 0;
+    axis = null;
+    stage.setPointerCapture(e.pointerId);
+  });
+
+  window.addEventListener('pointermove', (e) => {
+    const rect = stage.getBoundingClientRect();
+    const px = ((e.clientX - rect.left) / rect.width) * 100;
+    const py = ((e.clientY - rect.top) / rect.height) * 100;
+    document.documentElement.style.setProperty('--lx', `${px}%`);
+    document.documentElement.style.setProperty('--ly', `${py}%`);
+
+    if (!dragging) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    vx = (e.clientX - lastX) * 0.55;
+    vy = (e.clientY - lastY) * 0.55;
+    lastX = e.clientX;
+    lastY = e.clientY;
+
+    if (!axis && Math.hypot(dx, dy) > 5) {
+      axis = Math.abs(dx) >= Math.abs(dy) ? 'y' : 'x';
+    }
+    if (axis === 'y') {
+      ty = Math.max(-175, Math.min(175, baseRy + dx * 0.6));
+      tx = Math.max(-20, Math.min(20, baseRx - dy * 0.12));
+    } else if (axis === 'x') {
+      tx = Math.max(-175, Math.min(175, baseRx - dy * 0.6));
+      ty = Math.max(-20, Math.min(20, baseRy + dx * 0.12));
+    }
+  });
+
+  function onRelease() {
+    if (!dragging) return;
+    dragging = false;
+    const predictY = ry + vy * 6;
+    const predictX = rx - vy * 6;
+
+    if (axis === 'y' && Math.abs(predictY) > 38) {
+      const dir = predictY > 0 ? 1 : -1;
+      side = side === 'front' ? 'back' : 'front';
+      hasEverFlipped = true;
+      ry = ry - dir * 180;
+      rx = -rx;
+      if (side === 'front') resetShell();
+    } else if (axis === 'x' && Math.abs(predictX) > 38) {
+      const dir = predictX > 0 ? 1 : -1;
+      side = side === 'front' ? 'back' : 'front';
+      hasEverFlipped = true;
+      rx = rx - dir * 180;
+      ry = -ry;
+      if (side === 'front') resetShell();
+    }
+    tx = 0; ty = 0;
+  }
+
+  stage.addEventListener('pointerup', onRelease);
+  stage.addEventListener('pointercancel', onRelease);
+
+  const bgImage = new Image();
+  bgImage.crossOrigin = 'anonymous';
+  bgImage.src = 'https://wsrv.nl/?url=https://files.catbox.moe/tyxu2k.jpg';
+
+  const rainCanvas = document.getElementById('rainBg');
+  const rCtx = rainCanvas.getContext('2d');
+  const dropsFront = document.getElementById('dropsFront');
+  const dropsBack = document.getElementById('dropsBack');
+  const dfCtx = dropsFront.getContext('2d');
+  const dbCtx = dropsBack.getContext('2d');
+
+  let rainStreaks = [];
+  let glassDrops = [];
+
+  function makeGlassDrop(w, h, randomY = false) {
+    const isBead = Math.random() < 0.55;
+    const r = isBead ? 1.1 + Math.random() * 1.3 : 2.5 + Math.random() * 2.2;
+    return {
+      x: 16 + Math.random() * (w - 32),
+      y: randomY ? 12 + Math.random() * (h - 24) : -6,
+      r,
+      vy: 0,
+      slipTimer: isBead ? 200 + irnd(500) : irnd(140),
+      wobbleSeed: Math.random() * 100
+    };
+  }
+
+  function resizeCanvases() {
+    rainCanvas.width = window.innerWidth;
+    rainCanvas.height = window.innerHeight;
+    const rect = stage.getBoundingClientRect();
+    dropsFront.width = dropsBack.width = rect.width;
+    dropsFront.height = dropsBack.height = rect.height;
+
+    rainStreaks = Array.from({ length: 80 }, () => ({
+      x: Math.random() * rainCanvas.width,
+      y: Math.random() * rainCanvas.height,
+      len: 16 + Math.random() * 22,
+      spd: 11 + Math.random() * 7,
+      alpha: 0.06 + Math.random() * 0.12
+    }));
+
+    if (!glassDrops.length) {
+      for (let i = 0; i < 24; i++) {
+        glassDrops.push(makeGlassDrop(rect.width, rect.height, true));
+      }
+    }
+  }
+
+  window.addEventListener('resize', resizeCanvases);
+  resizeCanvases();
+
+  function drawDropPath(ctx, x, y, r, vy) {
+    const stretch = Math.min(1.65, 1 + vy * 0.28);
+    const topY = y - r * stretch * 1.15;
+    const botY = y + r * 0.95;
+    ctx.beginPath();
+    ctx.moveTo(x, topY);
+    ctx.bezierCurveTo(x + r * 0.85, y - r * 0.2, x + r * 1.05, botY - r * 0.2, x, botY);
+    ctx.bezierCurveTo(x - r * 1.05, botY - r * 0.2, x - r * 0.85, y - r * 0.2, x, topY);
+    ctx.closePath();
+  }
+
+  function renderGlassDrops(ctx, w, h) {
+    ctx.clearRect(0, 0, w, h);
+    const tiltX = (ry / 90) * 0.35;
+
+    for (let i = 0; i < glassDrops.length; i++) {
+      const d = glassDrops[i];
+
+      d.slipTimer--;
+      if (d.slipTimer <= 0 && d.r > 2.3) {
+        d.vy = 1.2 + (d.r - 2.0) * 0.45;
+        d.slipTimer = 90 + irnd(220);
+      }
+
+      if (d.vy > 0.04) {
+        d.y += d.vy;
+        d.x += Math.sin(d.y * 0.11 + d.wobbleSeed) * 0.28 + tiltX;
+        d.vy *= 0.94;
+
+        if (d.vy > 0.7 && Math.random() < 0.22 && d.r > 2.6 && glassDrops.length < 32) {
+          d.r -= 0.18;
+          glassDrops.push({
+            x: d.x + (Math.random() - 0.5) * 0.8,
+            y: d.y - d.r * 1.6,
+            r: 1.0 + Math.random() * 0.6,
+            vy: 0,
+            slipTimer: 400 + irnd(400),
+            wobbleSeed: Math.random() * 100
+          });
+        }
+      } else {
+        d.vy = 0;
+        if (Math.random() < 0.008) d.r = Math.min(4.8, d.r + 0.12);
+      }
+
+      for (let j = i + 1; j < glassDrops.length; j++) {
+        const o = glassDrops[j];
+        const dist = Math.hypot(d.x - o.x, d.y - o.y);
+        if (dist < (d.r + o.r) * 0.95) {
+          d.r = Math.min(4.9, Math.hypot(d.r, o.r * 0.8));
+          if (d.r > 2.8) d.vy = Math.max(d.vy, 1.1);
+          glassDrops.splice(j, 1);
+          break;
+        }
+      }
+
+      if (d.y > h + 10 || d.x < -10 || d.x > w + 10) {
+        glassDrops[i] = makeGlassDrop(w, h, false);
+        continue;
+      }
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(d.x + 0.6, d.y + d.r * 0.35, d.r * 0.92, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.22)';
+      ctx.fill();
+      ctx.restore();
+
+      ctx.save();
+      drawDropPath(ctx, d.x, d.y, d.r, d.vy);
+      ctx.clip();
+
+      if (bgImage.complete && bgImage.naturalWidth > 0) {
+        const sx = ((d.x / w) * 0.6 + 0.2) * bgImage.naturalWidth;
+        const sy = ((d.y / h) * 0.6 + 0.2) * bgImage.naturalHeight;
+        const sSize = 90;
+        ctx.drawImage(
+          bgImage,
+          sx - sSize / 2, sy - sSize / 2, sSize, sSize,
+          d.x - d.r * 1.4, d.y - d.r * 1.6, d.r * 2.8, d.r * 3.2
+        );
+      }
+
+      const grad = ctx.createLinearGradient(d.x - d.r, d.y - d.r, d.x + d.r, d.y + d.r);
+      grad.addColorStop(0, 'rgba(10, 16, 13, 0.42)');
+      grad.addColorStop(0.5, 'rgba(255, 255, 255, 0.04)');
+      grad.addColorStop(1, 'rgba(235, 250, 242, 0.52)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(d.x - d.r * 2, d.y - d.r * 2, d.r * 4, d.r * 4);
+      ctx.restore();
+
+      ctx.save();
+      drawDropPath(ctx, d.x, d.y, d.r, d.vy);
+      ctx.lineWidth = 0.55;
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.28)';
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(d.x - d.r * 0.32, d.y - d.r * 0.28, Math.max(0.45, d.r * 0.22), 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+      ctx.fill();
+      ctx.restore();
+    }
+
+    if (glassDrops.length < 22 && Math.random() < 0.04) {
+      glassDrops.push(makeGlassDrop(w, h, true));
+    }
+  }
+
+  function animate() {
+    if (dragging) {
+      rx += (tx - rx) * 0.42;
+      ry += (ty - ry) * 0.42;
+    } else {
+      vx = (vx + (tx - rx) * 0.1) * 0.78;
+      vy = (vy + (ty - ry) * 0.1) * 0.78;
+      rx += vx;
+      ry += vy;
+      if (side === 'back' && !shellStarted && Math.abs(rx) < 55 && Math.abs(ry) < 55) runShell();
+    }
+
+    const activeEl = side === 'front' ? front : back;
+    const hiddenEl = side === 'front' ? back : front;
+    const useX = axis === 'x' || Math.abs(rx) > Math.abs(ry);
+    const over90 = Math.abs(rx) > 90 || Math.abs(ry) > 90;
+
+    let secRx = rx, secRy = ry;
+    if (useX) {
+      secRx = rx + (rx >= 0 ? -180 : 180);
+      secRy = -ry;
+    } else {
+      secRy = ry + (ry >= 0 ? -180 : 180);
+      secRx = -rx;
+    }
+
+    activeEl.style.transform = `perspective(1100px) rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg)`;
+    hiddenEl.style.transform = `perspective(1100px) rotateX(${secRx.toFixed(2)}deg) rotateY(${secRy.toFixed(2)}deg)`;
+
+    if (!over90) {
+      activeEl.style.opacity = '1';
+      activeEl.style.pointerEvents = 'auto';
+      hiddenEl.style.opacity = '0';
+      hiddenEl.style.pointerEvents = 'none';
+    } else {
+      activeEl.style.opacity = '0';
+      activeEl.style.pointerEvents = 'none';
+      hiddenEl.style.opacity = '1';
+      hiddenEl.style.pointerEvents = 'auto';
+    }
+
+    rCtx.clearRect(0, 0, rainCanvas.width, rainCanvas.height);
+    rCtx.lineWidth = 1;
+    for (const s of rainStreaks) {
+      rCtx.strokeStyle = `rgba(210, 228, 220, ${s.alpha})`;
+      rCtx.beginPath();
+      rCtx.moveTo(s.x, s.y);
+      rCtx.lineTo(s.x - s.len * 0.16, s.y + s.len);
+      rCtx.stroke();
+      s.y += s.spd;
+      s.x -= s.spd * 0.16;
+      if (s.y > rainCanvas.height) {
+        s.y = -20;
+        s.x = Math.random() * (rainCanvas.width + 120);
+      }
+    }
+
+    const activeCtx = (side === 'front' && !over90) || (side === 'back' && over90) ? dfCtx : dbCtx;
+    renderGlassDrops(activeCtx, dropsFront.width, dropsFront.height);
+
+    requestAnimationFrame(animate);
+  }
+
+  requestAnimationFrame(animate);
+
+  let audioCtx = null;
+  let masterGain = null;
+  let isMuted = false;
+  const soundBtn = document.getElementById('soundBtn');
+  const svgSoundOn = document.getElementById('svgSoundOn');
+  const svgSoundOff = document.getElementById('svgSoundOff');
+
+  function ensureAudio() {
+    if (audioCtx) {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return;
+    }
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return;
+    audioCtx = new Ctx();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+
+    const rate = audioCtx.sampleRate;
+    const len = rate * 6;
+    const pinkBuf = audioCtx.createBuffer(1, len, rate);
+    const whiteBuf = audioCtx.createBuffer(1, len, rate);
+    const pData = pinkBuf.getChannelData(0);
+    const wData = whiteBuf.getChannelData(0);
+
+    let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+    for (let i = 0; i < len; i++) {
+      const w = Math.random() * 2 - 1;
+      wData[i] = w * 0.35;
+      b0 = 0.99886 * b0 + w * 0.0555179;
+      b1 = 0.99332 * b1 + w * 0.0750759;
+      b2 = 0.96900 * b2 + w * 0.1538520;
+      b3 = 0.86650 * b3 + w * 0.3104856;
+      b4 = 0.55000 * b4 + w * 0.5329522;
+      b5 = -0.7616 * b5 - w * 0.0168980;
+      pData[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + w * 0.5362) * 0.045;
+      b6 = w * 0.115926;
+    }
+
+    masterGain = audioCtx.createGain();
+    masterGain.gain.setValueAtTime(0.01, audioCtx.currentTime);
+    masterGain.gain.exponentialRampToValueAtTime(0.55, audioCtx.currentTime + 2.0);
+    masterGain.connect(audioCtx.destination);
+
+    const rainBed = audioCtx.createBufferSource();
+    rainBed.buffer = pinkBuf;
+    rainBed.loop = true;
+    const rainFilter = audioCtx.createBiquadFilter();
+    rainFilter.type = 'bandpass';
+    rainFilter.frequency.value = 1150;
+    rainFilter.Q.value = 0.7;
+    const rainGain = audioCtx.createGain();
+    rainGain.gain.value = 0.65;
+    rainBed.connect(rainFilter);
+    rainFilter.connect(rainGain);
+    rainGain.connect(masterGain);
+    rainBed.start();
+
+    const mistSrc = audioCtx.createBufferSource();
+    mistSrc.buffer = whiteBuf;
+    mistSrc.loop = true;
+    const mistHp = audioCtx.createBiquadFilter();
+    mistHp.type = 'highpass';
+    mistHp.frequency.value = 2800;
+    const mistLp = audioCtx.createBiquadFilter();
+    mistLp.type = 'lowpass';
+    mistLp.frequency.value = 6500;
+    const mistGain = audioCtx.createGain();
+    mistGain.gain.value = 0.11;
+    mistSrc.connect(mistHp);
+    mistHp.connect(mistLp);
+    mistLp.connect(mistGain);
+    mistGain.connect(masterGain);
+    mistSrc.start(0, 1.7);
+
+    const forestWind = audioCtx.createBufferSource();
+    forestWind.buffer = pinkBuf;
+    forestWind.loop = true;
+    const windLp = audioCtx.createBiquadFilter();
+    windLp.type = 'lowpass';
+    windLp.frequency.value = 185;
+    const windGain = audioCtx.createGain();
+    windGain.gain.value = 0.55;
+    forestWind.connect(windLp);
+    windLp.connect(windGain);
+    windGain.connect(masterGain);
+    forestWind.start(0, 3.2);
+
+    const lfo = audioCtx.createOscillator();
+    lfo.frequency.value = 0.08;
+    const lfoG = audioCtx.createGain();
+    lfoG.gain.value = 55;
+    lfo.connect(lfoG);
+    lfoG.connect(windLp.frequency);
+    lfo.start();
+
+    setInterval(() => {
+      if (!audioCtx || isMuted || audioCtx.state !== 'running') return;
+      if (Math.random() < 0.65) {
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        const baseFreq = 900 + Math.random() * 1600;
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(baseFreq, now);
+        osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.35, now + 0.025);
+
+        g.gain.setValueAtTime(0.0001, now);
+        g.gain.linearRampToValueAtTime(0.015 + Math.random() * 0.02, now + 0.004);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + 0.032);
+
+        osc.connect(g);
+        g.connect(masterGain);
+        osc.start(now);
+        osc.stop(now + 0.035);
+      }
+    }, 55);
+  }
+
+  window.addEventListener('pointerdown', ensureAudio);
+
+  soundBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!audioCtx) {
+      ensureAudio();
+      return;
+    }
+    isMuted = !isMuted;
+    if (isMuted) {
+      masterGain.gain.setTargetAtTime(0.0001, audioCtx.currentTime, 0.25);
+      svgSoundOn.style.display = 'none';
+      svgSoundOff.style.display = 'block';
+    } else {
+      masterGain.gain.setTargetAtTime(0.55, audioCtx.currentTime, 0.35);
+      svgSoundOn.style.display = 'block';
+      svgSoundOff.style.display = 'none';
+    }
+  });
+</script>
+</body>
+</html>
