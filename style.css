@@ -1,3 +1,7 @@
+:root {
+  --bg-img: url("https://wsrv.nl/?url=https://files.catbox.moe/tyxu2k.jpg");
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
