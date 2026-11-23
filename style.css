@@ -1,7 +1,3 @@
-:root {
-  --bg-img: url("https://wsrv.nl/?url=https://files.catbox.moe/tyxu2k.jpg");
-}
-
 * {
   box-sizing: border-box;
   margin: 0;
@@ -29,29 +25,28 @@ html, body {
   position: fixed;
   inset: -30px;
   background: 
-    linear-gradient(180deg, rgba(8, 12, 14, 0.35) 0%, rgba(5, 8, 10, 0.65) 100%),
+    linear-gradient(180deg, rgba(6, 10, 12, 0.45) 0%, rgba(4, 7, 9, 0.72) 100%),
     var(--bg-img) center / cover no-repeat;
-  filter: brightness(0.84) contrast(1.06);
   z-index: 0;
   transform: scale(1.03);
 }
 
-/* 2. Плывущий туман на фоне */
+/* 2. Плывущий туман на фоне (без тяжёлого blur-фильтра) */
 .bg::after {
   content: "";
   position: absolute;
-  inset: -20%;
+  inset: -15%;
   background: 
-    radial-gradient(circle at 30% 50%, rgba(210, 225, 230, 0.08) 0%, transparent 50%),
-    radial-gradient(circle at 70% 60%, rgba(200, 220, 225, 0.06) 0%, transparent 45%);
-  filter: blur(40px);
+    radial-gradient(circle at 30% 50%, rgba(210, 225, 230, 0.09) 0%, transparent 55%),
+    radial-gradient(circle at 70% 60%, rgba(200, 220, 225, 0.07) 0%, transparent 50%);
   animation: mistDrift 28s ease-in-out infinite alternate;
+  will-change: transform;
   pointer-events: none;
 }
 
 @keyframes mistDrift {
-  0%   { transform: translate(-4%, 2%) scale(1); }
-  100% { transform: translate(5%, -3%) scale(1.08); }
+  0%   { transform: translate3d(-3%, 1.5%, 0) scale(1); }
+  100% { transform: translate3d(4%, -2%, 0) scale(1.06); }
 }
 
 #rainBg {
@@ -371,23 +366,20 @@ html, body {
   white-space: pre;
   letter-spacing: 0;
   user-select: none;
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.45));
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
 }
 
 /* 5. Мягкое свечение цветков сакуры */
 .b-wood { color: #c89f81; }
 .b-sak1 {
   color: #ffd6e4;
-  text-shadow: 0 0 8px rgba(255, 182, 209, 0.45);
+  text-shadow: 0 0 7px rgba(255, 182, 209, 0.45);
 }
 .b-sak2 {
   color: #f49cbb;
-  text-shadow: 0 0 6px rgba(244, 156, 187, 0.3);
+  text-shadow: 0 0 5px rgba(244, 156, 187, 0.3);
 }
-.b-sak3 {
-  color: #d46a8e;
-  text-shadow: 0 0 5px rgba(212, 106, 142, 0.25);
-}
+.b-sak3 { color: #d46a8e; }
 .b-pot   { color: rgba(255, 255, 255, 0.55); }
 .b-grass { color: #8fbc94; }
 
@@ -432,7 +424,6 @@ html, body {
   height: 16px;
   fill: rgba(255, 255, 255, 0.75);
   flex-shrink: 0;
-  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.3));
 }
 
 /* 5. Скользящее подчёркивание ссылки */
