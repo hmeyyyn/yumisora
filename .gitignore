@@ -1,0 +1,13 @@
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+*.bak
+*.tmp
+*~
